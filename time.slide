@@ -109,7 +109,9 @@ Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
 - Discontinuous
 - *Ambiguous!*
 
-* Leap second
+* Leap second!
+
+The disconnect between interval and observed time systems
 
   31/12/1998 23:59:59	->	915,148,799
   31/12/1998 23:59:60	->	915,148,800
@@ -118,23 +120,37 @@ Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
 
 What point in time is 915,148,800.5?
 
+* Windows
+
+Has no idea what a leap second is
+
+- SYSTEMTIME is leap unaware, will just be 1 second ahead at the leap second until next correction
+- FILETIME (number of 100 ns intervals since 1601) is contiguous like TAI
+
 * Solutions
 
-How can we solve this?
+If we're timestamping events, how do we know accurately what time it is?
 
 * Use TAI
 
-TAI is awesome
+TAI is great!
 
 - Never ambiguous
 - Continuous
 - Difficult to know where the sun is for a given future TAI value
+- UTC becomes 'just another timezone'
 
 Added in linux 3.10 (June 2013)
 
   clock_gettime(CLOCK_TAI, &t)  
 
+Windows: Erk
+
 * Clock Slewing
 
 Lie about the length of a second in order to preserve continuity
 
+* Windows
+
+- SYSTEMTIME is leap unaware, will just be 1 second ahead at the leap second until next correction
+- FILETIME (number of 100 ns intervals since 1601) is contiguous like TAI
