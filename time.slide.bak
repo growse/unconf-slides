@@ -1,0 +1,135 @@
+What time is it? Who knows?
+Time is hard. And important.
+19 Jun 2015
+
+Andrew Rowson
+Time Series Architecture
+
+
+* Brief history of time
+
+* Given nothing, how do you know when it is?
+
+- Measure Earth rotation period (Apparent solar day)
+- Measure Earth orbit period
+- Measure Moon phase
+
+All of these are bad.
+
+* Solar time
+
+ nt solar day varies throughout the year.
+
+Average across the year to give mean solar time
+
+.image 700px-Equation_of_time.svg.png _ 500
+.caption Variation of observed solar year in relation to mean solar year
+
+* Universal time
+
+Introduced in 1935, consolidation of historical use of Greenwich as Mean Time.
+
+Observational.
+
+- Uses stars  instead of the sun, because the sun is flakey and unrelable
+- UT0: Measure the solar year by observing a number of stars / radio sources, from a fixed point on Earth
+- UT1: There's no such thing as a fixed point on earth, correct for polar motion. Observation of 212 quasars (now 3,414 quasars) *International Celestial Reference Frame*
+- UT1R: Forgot about the tides, smooth them out
+- UT2: Erk, seasons, smooth them out
+
+* Pre-1952
+
+Everyone assumed that the Earth's orbit and rotation were uniform.
+
+Problems (1927): 
+
+- Length of the day is irregular
+- Length of day is slowing down over time
+- The 'solar second' isn't constant
+
+Different ways of measuring the length of a second results in different answers.
+
+* Ephemeris Time (1952)
+
+Attempt to standardise the length of a second
+
+- Based on observations of the Sun at the turn of the 20th century
+- Everything pinned to the length of the tropical (solar) year 1900
+- Complex equations to 'correct' observed solar year (universal time) to 'ephermeral year'
+- 1 ephemeris day = 86,400 seconds
+- 1 second = 1/31556925.975 of the solar year in 1900
+- In 1960, changed to 1/31556925.9747 of the solar year
+
+* Ephemeris Time - Universal Time 
+
+.image Delta_T.jpg
+
+* Caesium clocks!
+
+First introduced in 1955 and proved that Earth rotational fluctuation is essentially random.
+
+In 1968, 1 SI second was defined:
+
+  The second is the duration of 9,192,631,770 periods of the radiation 
+  corresponding to the transition between the two hyperfine levels of
+  the ground state of the caesium 133 atom.
+
+Subsequent footnote in 1997:
+
+  This definition refers to a caesium atom at rest at a temperature of 0K.
+
+* International Atomic Time (TAI)
+
+Defined as 0 = 01/01/1958 00:00:00 (UT2)
+
+(ΔT was about 32 seconds at that point)
+
+* Coordinated Universal Time (UTC)
+
+Non observational time (unlike UT1), and therefore drifts away from UT1.
+
+.image Leapsecond.ut1-utc.svg.png
+
+.caption Historical value of DUT1
+
+* International Earth Rotation and Reference Systems Service
+
+.html iers-bulletin.txt
+
+* Computers are stupid
+
+* Unix time
+
+Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
+
+- Designed to store arbitrary points in time at any point after the epoch
+- 1 day exactly 86,400 seconds
+- Also designed to allow easy interval calculation. 19/06/2015 -> 19/06/2016 = 366 days = 31,622,400 unix seconds
+- Discontinuous
+- *Ambiguous!*
+
+* Leap second
+
+  31/12/1998 23:59:59	->	915,148,799
+  31/12/1998 23:59:60	->	915,148,800
+  01/01/1999 00:00:00	->	915,148,800
+  01/01/1999 00:00:01	->	915,148,801
+
+What point in time is 915,148,800.5?
+
+* Solutions
+
+How can we solve this?
+
+* Use TAI
+
+TAI is awesome
+
+- Never ambiguous
+- Continuous
+- Difficult to know where the sun is for a given future TAI value
+
+* Clock Slewing
+
+Lie about the length of a second in order to preserve continuity
+
