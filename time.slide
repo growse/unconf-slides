@@ -98,7 +98,39 @@ Non observational time (unlike UT1), and therefore drifts away from UT1.
 
 * Computers are stupid
 
-* Unix time
+* Computers are difficult
+
+Three specific problems:
+
+1. Timestamping events
+2. Timing duration of things
+3. Scheduling future events
+
+* Windows
+
+Has no idea what a leap second is
+
+- SYSTEMTIME - struct containing year / month / day / hour / minute / second / microsecond
+	typedef struct _SYSTEMTIME {
+	  WORD wYear;
+	  WORD wMonth;
+	  WORD wDayOfWeek;
+	  WORD wDay;
+	  WORD wHour;
+	  WORD wMinute;
+	  WORD wSecond;
+	  WORD wMilliseconds;
+	} SYSTEMTIME, *PSYSTEMTIME;
+- FILETIME (number of 100 ns intervals since 1601) is contiguous like TAI
+	typedef struct _FILETIME {
+	  DWORD dwLowDateTime;
+	  DWORD dwHighDateTime;
+	} FILETIME, *PFILETIME;
+
+
+* Unix
+
+Unix time!
 
 Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
 
@@ -109,9 +141,9 @@ Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
 - Discontinuous
 - *Ambiguous!*
 
-* Leap second!
+* Problem: Timestamping events
 
-The disconnect between interval and observed time systems
+Unix time is ambiguous
 
   31/12/1998 23:59:59	->	915,148,799
   31/12/1998 23:59:60	->	915,148,800
@@ -120,18 +152,8 @@ The disconnect between interval and observed time systems
 
 What point in time is 915,148,800.5?
 
-* Windows
 
-Has no idea what a leap second is
-
-- SYSTEMTIME is leap unaware, will just be 1 second ahead at the leap second until next correction
-- FILETIME (number of 100 ns intervals since 1601) is contiguous like TAI
-
-* Solutions
-
-If we're timestamping events, how do we know accurately what time it is?
-
-* Use TAI
+* Solution: Use TAI (or some other contiguous thing like FILETIME)
 
 TAI is great!
 
@@ -144,13 +166,21 @@ Added in linux 3.10 (June 2013)
 
   clock_gettime(CLOCK_TAI, &t)  
 
-Windows: Erk
+Windows: FILETIME? 
 
-* Clock Slewing
+* Clock Slewing (Leap Smear)
 
 Lie about the length of a second in order to preserve continuity
 
-* Windows
+* Useful resources
 
-- SYSTEMTIME is leap unaware, will just be 1 second ahead at the leap second until next correction
-- FILETIME (number of 100 ns intervals since 1601) is contiguous like TAI
+Time hub group:
+
+.link https://thehub.thomsonreuters.com/groups/time/
+Redhat leap second testing tool:
+
+.link https://access.redhat.com/articles/199563
+Google and the leap smear
+
+.link http://googleblog.blogspot.com/2011/09/time-technology-and-leaping-seconds.html
+
