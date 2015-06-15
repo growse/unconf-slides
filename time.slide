@@ -170,7 +170,9 @@ Windows: FILETIME?
 
 * Clock Slewing (Leap Smear)
 
-Lie about the length of a second in order to preserve continuity
+Not all kernels / applications can cope with the system clock jumping, or a minute having 61 seconds in it. So, lie to them.
+
+.image ntpd_ignore1.png
 
 * Useful resources
 
