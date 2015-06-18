@@ -16,6 +16,8 @@ Time Series Architecture
 
 All of these are bad.
 
+>Some notes
+
 * Solar time
 
 Apparent solar day varies throughout the year.
@@ -98,7 +100,7 @@ Non observational time (unlike UT1), and therefore drifts away from UT1.
 
 * Computers are stupid
 
-* Computers are difficult
+* Computers are stupid
 
 Three specific problems:
 
@@ -121,16 +123,18 @@ Has no idea what a leap second is
 	  WORD wSecond;
 	  WORD wMilliseconds;
 	} SYSTEMTIME, *PSYSTEMTIME;
-- FILETIME (number of 100 ns intervals since 1601) is contiguous like TAI
+- FILETIME (number of 100 ns intervals since 1601) is pretty meaningless
 	typedef struct _FILETIME {
 	  DWORD dwLowDateTime;
 	  DWORD dwHighDateTime;
 	} FILETIME, *PFILETIME;
 
 
-* Unix
+* Linux
 
-Unix time!
+Kernel is leap aware, ntpd can detect leap indicator flag set by upstream servers
+
+* Unix time!
 
 Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
 
