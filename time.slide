@@ -8,6 +8,12 @@ Time Series Architecture
 
 * A Brief History of Time
 
+> Wanted to talk about time, personal interest prompted by specific TRTH event.
+> 
+> We work in Timeseries, so time is important to us
+> 
+> But first, some history
+
 * Given nothing, how do you know when it is?
 
 - Measure Earth rotation period (Apparent solar day)
@@ -16,7 +22,13 @@ Time Series Architecture
 
 All of these are bad.
 
->Some notes
+> Historically, time was a vague construct (sunrise, noon, after noon, sunset)
+> 
+> Basically, look in the sky, see what changed.
+> 
+> Humans are good at detecting patterns, the sky is a pattern
+> 
+> Was good enough in the old days
 
 * Solar time
 
@@ -27,6 +39,12 @@ Average across the year to give mean solar time
 .image 700px-Equation_of_time.svg.png _ 500
 .caption Variation of observed solar year in relation to mean solar year
 
+> Sun is an obvious thing in the sky, and the repeating pattern drives human behavioural rhythms.
+>
+> Think sun dials.
+> 
+> Actually turns out that the length of a solar day varies throughout the year, so they came up with 'mean solar time'
+
 * Universal time
 
 Introduced in 1935, consolidation of historical use of Greenwich as Mean Time.
@@ -35,9 +53,17 @@ Observational.
 
 - Uses stars  instead of the sun, because the sun is flakey and unrelable
 - UT0: Measure the solar year by observing a number of stars / radio sources, from a fixed point on Earth
-- UT1: There's no such thing as a fixed point on earth, correct for polar motion. Observation of 212 quasars (now 3,414 quasars) *International Celestial Reference Frame*
+- UT1: There's no such thing as a fixed point on earth, correct for polar motion. Observation of 212 quasars (now 3,414 quasars)
 - UT1R: Forgot about the tides, smooth them out
 - UT2: Erk, seasons, smooth them out
+
+> Evolution of solar time into something better. Sun is flakey, so use the things much further away instead.
+>
+> Current stars that we use form what we call the "International Celestial Reference Frame", which is a "quasi-intertial reference frame centered at the barycenter of the Solar System and defined by 212 extra galactic sources". ICRF2 updated that to 3,414 sources in 2009. Basically, we measure everything relative to this point in space/time (Relativity!)
+>
+> Ultimately, Trying to build a useful clock that measures the angle of rotation of the earth. if you wanted to define the time at which a celestial event occurred, you could use this clock to do it. I'm calling this 'celestial time'.
+> 
+> Problems come when you actually want to know how long a second is in a reliable way. How do you measure a time 'interval' or period?
 
 * Pre-1952
 
@@ -51,6 +77,10 @@ Problems (1927):
 
 Different ways of measuring the length of a second results in different answers.
 
+> We needed to solve the problem of defining how long a second is. Clocks don't measure celestial time, they measure the interval between now and when they were last set.
+> 
+> Historical perception was that celestial time was good enough for measuring intervals. Not true! Universe means you'll have to keep resetting your clocks. Forever.
+
 * Ephemeris Time (1952)
 
 Attempt to standardise the length of a second
@@ -62,9 +92,19 @@ Attempt to standardise the length of a second
 - 1 second = 1/31556925.975 of the solar year in 1900
 - In 1960, changed to 1/31556925.9747 of the solar year
 
+> People got together to define a second.
+> 
+> Imaginary clock ticking at an exact rate set in 1900.
+>
+> Drifts away from Universal Time
+
 * Ephemeris Time - Universal Time 
 
 .image Delta_T.jpg
+
+> They call the drift Delta T. Lots of approximate formulae to guess based on observations in 1900.
+>
+> Using 1900 tropical year was a bit of a hack, not particularly precise.
 
 * Caesium clocks!
 
@@ -80,15 +120,35 @@ Subsequent footnote in 1997:
 
   This definition refers to a caesium atom at rest at a temperature of 0K.
 
+> Science (Technology?) to the rescue.
+>
+> Very precise clocks could now be built.
+>
+> Allowed us to replace Ephemeris time with something better
+
 * International Atomic Time (TAI)
 
 Defined as 0 = 01/01/1958 00:00:00 (UT2)
 
 (ΔT was about 32 seconds at that point)
 
+> Temps Atomique International
+>
+> Contiguous, number of SI seconds since 01/01/1958 (in UT2).
+>
+> Minor slow of 10^-12 in January 1977 because of relativity. Use Mean Sea Level as baseline.
+>
+> Ephemeris time was superceded by Terrestrial Time, which is fixed at TAI + Delta T in 1977 (32.184s). TT interval same as TAI. Everything converged on TAI
+
 * Coordinated Universal Time (UTC)
 
 Non observational time (unlike UT1), and therefore drifts away from UT1.
+
+> What we use today. Gregorian Calendar says 86,400 seconds in a day (24 hours). However, we drift because of reasons.
+>
+> Random effects (weather, seasons) also trend (earth slowing down) - blame the moon.
+>
+> To keep UTC useful, try to keep it within a second of UT1. IERS keep this
 
 .image Leapsecond.ut1-utc.svg.png
 
@@ -98,19 +158,23 @@ Non observational time (unlike UT1), and therefore drifts away from UT1.
 
 .html iers-bulletin.txt
 
-* Computers are stupid
+> Memos. Wow.
+>
+> Six months in advance.
 
-* Computers are stupid
+* Computers are Stupid
+
+* Computers are Clocks
 
 Three specific problems:
 
 1. Timestamping events
 2. Timing duration of things
-3. Scheduling future events
+3. Scheduling future events (or even labelling past events)
+
+> Computers are clocks, but read their clock value and do things with it. Three Problems.
 
 * Windows
-
-Has no idea what a leap second is
 
 - SYSTEMTIME - struct containing year / month / day / hour / minute / second / microsecond
 	typedef struct _SYSTEMTIME {
@@ -129,10 +193,28 @@ Has no idea what a leap second is
 	  DWORD dwHighDateTime;
 	} FILETIME, *PFILETIME;
 
+Has no idea what a leap second is
+
+> Briefly wanted to talk about what Windows / Linux do today for developers.
+>
+> SYSTEMTIME is a wall clock
+>
+> FILETIME is a counter - set clock from BIOS (18.204Hz, 54.931ms) since 1980-01-01. Just keeps counting.
+>
+> Meinberg NTP client can either step the clock back (discontinuous), hold the time for 1s, or slew. W32Time will just step back on next sync.
 
 * Linux
 
+Few different clocks, main one is `CLOCK_REALTIME`. Outputs time as a `timespec`
+
+  struct timespec {
+        time_t   tv_sec;        /* seconds */
+        long     tv_nsec;       /* nanoseconds */
+  };
+
 Kernel is leap aware, ntpd can detect leap indicator flag set by upstream servers
+
+> Fundamentally, this struct contains... Unix time!
 
 * Unix time!
 
@@ -145,7 +227,7 @@ Number of seconds since 01/01/1970 00:00:00 UTC, not counting leap seconds
 - Discontinuous
 - *Ambiguous!*
 
-* Problem: Timestamping events
+* Problem 1: Timestamping events
 
 Unix time is ambiguous
 
@@ -156,8 +238,9 @@ Unix time is ambiguous
 
 What point in time is 915,148,800.5?
 
+> Lots of systems do this - take an event, put a unix timestamp on it, store it, continue
 
-* Solution: Use TAI (or some other contiguous thing like FILETIME)
+* Solution: Use TAI
 
 TAI is great!
 
@@ -170,15 +253,74 @@ Added in linux 3.10 (June 2013)
 
   clock_gettime(CLOCK_TAI, &t)  
 
-Windows: FILETIME? 
+Windows: FILETIME? (Beware reboots)
 
-* Clock Slewing (Leap Smear)
+> TAI is precise.
+
+* Faking it (Slewing, Leap Smear)
 
 Not all kernels / applications can cope with the system clock jumping, or a minute having 61 seconds in it. So, lie to them.
 
 .image ntpd_ignore1.png
 
-* Useful resources
+> Disable ntp leap flag on linux, this is what you get.
+
+* Chronyd
+
+.image chronyd_slew1.png
+
+* Leap smear
+
+.image smear_tai_offset1.png
+
+* Problem 2: Timing things
+
+Look at the wall clock, do something, look at wall clock again
+
+Difference is how long it took?
+
+* Solution: Use a monotonic clock
+
+Linux: `CLOCK_MONOTONIC`
+
+Java: `System.nanoTime()`
+
+Windows: `GetTickCount64(void);`
+
+> Relative is the most important thing here
+
+* Problem 3: Scheduling future dates
+
+Schedule an event at 01:30:00 BST June 5 2050
+
+- Does BST exist in 2050? 
+- What if there's a daylight savings hour added? 
+- Will 2050 have a June 5?
+- How many seconds is it between now and then?
+
+> Timezones are political. Completely arbitrary.
+>
+> BST Established in BST Act 1916. (Brief flirtation with British Double Summer Time betwee 1940 and 1945)
+>
+> DST means that a particular time may happen twice, or not at all. Maybe BST will be redefined on that day: Shanghai time went backwards 5 minutes and 52 seconds at the end of 1927.
+>
+> Samoa didn't have a December 30th in 2011 because it moved across the date line.
+> 
+> Switch from Julian to Gregorian lost between 10-13 days from various countries between 1582 (France) and 1927 (Turkey)
+
+
+* Software issues
+
+- iOS NSDate is a date time instance represented at Midnight. May be null....
+- Java doesn't apply tz logic prior to 1900. Check your libraries.
+
+* Solution
+
+Errr, it depends.
+
+> Conclude
+
+* Useful / interesting resources
 
 Time hub group:
 
@@ -186,7 +328,14 @@ Time hub group:
 Redhat leap second testing tool:
 
 .link https://access.redhat.com/articles/199563
+Redhat: Five different ways to handle leap seconds with NTP
+
+.link http://developerblog.redhat.com/tag/fedora/
+
 Google and the leap smear
 
 .link http://googleblog.blogspot.com/2011/09/time-technology-and-leaping-seconds.html
 
+How accurate is a GPS time source?
+
+.link http://gpsinformation.net/main/gpstime.htm
